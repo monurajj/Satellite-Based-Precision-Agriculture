@@ -117,6 +117,16 @@ Predictions use the **actual trained model** (`experiments/results/best_model.jo
 
 **Prerequisites:** Run `python main.py` in the main project at least once to train and save the model.
 
+## Documentation (PDF)
+
+A detailed project documentation is available in `docs/Project-Documentation.html`. It covers:
+- System architecture and workflow
+- Frontend & backend how they work
+- ML model integration
+- API reference and setup instructions
+
+**To create a PDF:** Open `docs/Project-Documentation.html` in a browser → `Ctrl+P` / `Cmd+P` → Save as PDF.
+
 ## Production Notes
 
 - Replace in-memory storage in `backend/prediction.js` with MongoDB or another database

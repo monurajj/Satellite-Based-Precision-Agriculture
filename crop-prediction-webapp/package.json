@@ -1,11 +1,5 @@
 {
   "name": "crop-prediction-webapp",
   "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "docs:pdf": "node docs/generate-pdf.js"
-  },
-  "devDependencies": {
-    "puppeteer": "^21.0.0"
-  }
+  "private": true
 }
