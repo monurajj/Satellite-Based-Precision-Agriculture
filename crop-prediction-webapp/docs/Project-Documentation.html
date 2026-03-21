@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Yield Predictor - Project Documentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@400;600&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fff;
+    }
+    @media print {
+      body { padding: 1rem; }
+      .no-print { display: none !important; }
+      h1 { page-break-after: avoid; }
+      h2, h3 { page-break-after: avoid; }
+      pre, table, .diagram { page-break-inside: avoid; }
+    }
+    .print-hint {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #2d5016;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .print-hint kbd { background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px; }
+    h1 {
+      font-size: 1.8rem;
+      color: #2d5016;
+      border-bottom: 3px solid #2d5016;
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem;
+    }
+    h1:first-of-type { margin-top: 0; }
+    h2 { font-size: 1.35rem; color: #2d5016; margin: 2rem 0 0.75rem; }
+    h3 { font-size: 1.1rem; color: #333; margin: 1.25rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code, pre {
+      font-family: 'Source Code Pro', monospace;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+    }
+    pre {
+      display: block;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      white-space: pre-wrap;
+    }
+    pre code { padding: 0; background: none; border: none; }
+    .diagram {
+      background: #f8faf6;
+      border: 1px solid #d4e5cc;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    th { background: #2d5016; color: white; font-weight: 600; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .toc { background: #f0f7ed; padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .toc ul { list-style: none; margin: 0; }
+    .toc li { margin: 0.35rem 0; }
+    .toc a { color: #2d5016; text-decoration: none; font-weight: 500; }
+    .toc a:hover { text-decoration: underline; }
+    .callout { background: #e8f5e0; border-left: 4px solid #2d5016; padding: 0.75rem 1rem; margin: 1rem 0; }
+    .flow-step { margin: 0.5rem 0; padding-left: 1rem; border-left: 3px solid #6b9c3a; }
+    .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.9rem; color: #666; }
+  </style>
+</head>
+<body>
+
+<div class="print-hint no-print">To save as PDF: <kbd>Ctrl</kbd>+<kbd>P</kbd> (Win) or <kbd>Cmd</kbd>+<kbd>P</kbd> (Mac) → Choose "Save as PDF"</div>
+
+<h1>Crop Yield Predictor – Project Documentation</h1>
+<p><strong>Satellite-Based Precision Agriculture</strong> – Web Application for Small Farmers</p>
+<p><em>This document explains the complete workflow, architecture, backend, frontend, and ML integration.</em></p>
+
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <ul>
+    <li><a href="#overview">1. Project Overview</a></li>
+    <li><a href="#architecture">2. System Architecture</a></li>
+    <li><a href="#workflow">3. End-to-End Workflow</a></li>
+    <li><a href="#frontend">4. Frontend (React)</a></li>
+    <li><a href="#backend">5. Backend (Node.js + Express)</a></li>
+    <li><a href="#ml">6. ML Model Integration</a></li>
+    <li><a href="#api">7. API Reference</a></li>
+    <li><a href="#setup">8. Setup & Run Instructions</a></li>
+  </ul>
+</div>
+
+<!-- ========== 1. OVERVIEW ========== -->
+<h2 id="overview">1. Project Overview</h2>
+<p>The <strong>Crop Yield Predictor</strong> is a full-stack web application that allows small farmers to estimate crop production (in tons) based on field conditions. It uses the trained machine learning model from the main Satellite-Based Precision Agriculture project (XGBoost/Random Forest on satellite and weather data).</p>
+<h3>Key Features</h3>
+<ul>
+  <li><strong>Prediction Form:</strong> Farmers enter crop type, land area, soil type, rainfall, temperature, and solar radiation.</li>
+  <li><strong>Results Page:</strong> Displays predicted yield per hectare and total yield in tons.</li>
+  <li><strong>Dashboard:</strong> Shows previous predictions in a table and analytics charts (bar chart, pie chart).</li>
+  <li><strong>Real ML Model:</strong> Predictions come from the trained model (<code>best_model.joblib</code>), not dummy formulas.</li>
+</ul>
+
+<!-- ========== 2. ARCHITECTURE ========== -->
+<h2 id="architecture">2. System Architecture</h2>
+<p>The application has three main layers: Frontend, Backend API, and ML Prediction.</p>
+
+<div class="diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           CROP YIELD PREDICTOR                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   ┌──────────────────────┐      HTTP/REST      ┌──────────────────────┐    │
+│   │     FRONTEND          │   ◄──────────────►  │      BACKEND          │    │
+│   │  React + Vite         │   /api/predict      │  Node.js + Express    │    │
+│   │  Port: 3000           │   /api/history     │  Port: 4000           │    │
+│   │                       │                     │                       │    │
+│   │  • Dashboard          │                     │  • Validates input     │    │
+│   │  • Prediction Form    │                     │  • Spawns Python      │    │
+│   │  • Results            │                     │  • Stores history     │    │
+│   └──────────────────────┘                     └───────────┬──────────┘    │
+│                                                             │                │
+│                                                             │ spawn + stdin  │
+│                                                             ▼                │
+│   ┌──────────────────────┐                     ┌──────────────────────┐    │
+│   │   ML PIPELINE        │                     │  PYTHON ML SCRIPT    │    │
+│   │   (Main Project)     │  ◄──── loads ─────  │  predict_ml.py       │    │
+│   │                      │                     │                       │    │
+│   │  • best_model.joblib │                     │  • Maps inputs →      │    │
+│   │  • features.csv      │                     │    model features     │    │
+│   │  • data/merged_data  │                     │  • Runs inference     │    │
+│   └──────────────────────┘                     └──────────────────────┘    │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h3>Component Summary</h3>
+<table>
+  <tr><th>Component</th><th>Technology</th><th>Role</th></tr>
+  <tr><td>Frontend</td><td>React 18, Vite, Tailwind CSS, Recharts</td><td>UI, forms, charts, routing</td></tr>
+  <tr><td>Backend</td><td>Node.js, Express</td><td>REST API, validation, storage, Python subprocess orchestration</td></tr>
+  <tr><td>ML Prediction</td><td>Python, scikit-learn, joblib</td><td>Load model, map features, predict yield</td></tr>
+  <tr><td>Storage</td><td>In-memory (prediction.js)</td><td>History of predictions</td></tr>
+</table>
+
+<!-- ========== 3. WORKFLOW ========== -->
+<h2 id="workflow">3. End-to-End Workflow</h2>
+<p>When a farmer submits a prediction request, this is what happens:</p>
+
+<div class="flow-step">1. <strong>User fills form</strong> (crop type, land area, soil type, rainfall, temp, solar) and clicks "Get Prediction".</div>
+<div class="flow-step">2. <strong>Frontend</strong> sends POST request to <code>/api/predict</code> (proxied to backend:4000).</div>
+<div class="flow-step">3. <strong>Backend</strong> validates input, spawns <code>predict_ml.py</code>, passes JSON via stdin.</div>
+<div class="flow-step">4. <strong>Python script</strong> loads training stats, maps farmer inputs to 24 model features, loads <code>best_model.joblib</code>, runs <code>model.predict()</code>, returns JSON via stdout.</div>
+<div class="flow-step">5. <strong>Backend</strong> receives result, stores prediction in memory, returns JSON to frontend.</div>
+<div class="flow-step">6. <strong>Frontend</strong> navigates to Results page with prediction data, displays yield clearly.</div>
+
+<div class="callout">
+  <strong>Data flow:</strong> Farmer inputs → Backend validation → Python feature mapping → ML model inference → Backend storage → Frontend display
+</div>
+
+<!-- ========== 4. FRONTEND ========== -->
+<h2 id="frontend">4. Frontend (React)</h2>
+<h3>Structure</h3>
+<pre><code>frontend/
+├── src/
+│   ├── main.jsx           # Entry, ReactDOM, BrowserRouter
+│   ├── App.jsx            # Routes: /, /predict, /results
+│   ├── index.css          # Tailwind imports
+│   ├── api/
+│   │   └── predictions.js # API client: submitPrediction(), fetchHistory()
+│   ├── components/
+│   │   ├── Layout.jsx     # Navbar + main wrapper
+│   │   ├── Card.jsx       # Reusable card
+│   │   ├── LoadingSpinner.jsx
+│   │   └── ErrorMessage.jsx
+│   └── pages/
+│       ├── Dashboard.jsx  # Table + charts (Recharts)
+│       ├── PredictionForm.jsx
+│       └── Results.jsx
+├── index.html
+├── vite.config.js         # Proxy /api → localhost:4000
+└── tailwind.config.js</code></pre>
+
+<h3>How Frontend Links to Backend</h3>
+<p>The frontend uses a <strong>proxy</strong> configured in <code>vite.config.js</code>:</p>
+<pre><code>proxy: {
+  '/api': {
+    target: 'http://localhost:4000',
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/api/, ''),
+  },
+}</code></pre>
+<p>When the frontend calls <code>fetch('/api/predict', ...)</code>, Vite forwards the request to <code>http://localhost:4000/predict</code>. This avoids CORS issues during development.</p>
+
+<h3>Pages & Data Flow</h3>
+<table>
+  <tr><th>Page</th><th>Route</th><th>Data Source</th></tr>
+  <tr><td>Dashboard</td><td>/</td><td>GET /history → table + charts</td></tr>
+  <tr><td>Prediction Form</td><td>/predict</td><td>POST /predict → redirect to /results with state</td></tr>
+  <tr><td>Results</td><td>/results</td><td>React Router state (passed from form)</td></tr>
+</table>
+
+<!-- ========== 5. BACKEND ========== -->
+<h2 id="backend">5. Backend (Node.js + Express)</h2>
+<h3>Structure</h3>
+<pre><code>backend/
+├── server.js      # Express app, routes, Python subprocess call
+├── prediction.js  # In-memory storage: addPrediction(), getHistory()
+├── predict_ml.py  # Python ML inference script
+└── package.json</code></pre>
+
+<h3>How the Backend Works</h3>
+<ol>
+  <li><strong>POST /predict</strong>: Receives JSON body. Validates required fields (cropType, landArea, soilType). Calls <code>callMLPredict(input)</code>, which spawns Python, writes JSON to stdin, reads JSON from stdout, returns prediction. Stores result in memory and responds.</li>
+  <li><strong>GET /history</strong>: Returns array of stored predictions (newest first).</li>
+  <li><strong>GET /health</strong>: Simple health check.</li>
+</ol>
+
+<h3>Python Subprocess Integration</h3>
+<pre><code>// Backend spawns: python predict_ml.py
+// Sends: JSON.stringify(input) via stdin
+// Receives: JSON.parse(stdout) with predictedYield, totalYield, unit, message</code></pre>
+<p>The backend uses the project's <code>venv/bin/python</code> so the Python script has access to the same environment (numpy, pandas, scikit-learn, joblib).</p>
+
+<!-- ========== 6. ML INTEGRATION ========== -->
+<h2 id="ml">6. ML Model Integration</h2>
+<h3>Model Source</h3>
+<p>The model is trained by the main project's <code>main.py</code> pipeline and saved at:</p>
+<pre><code>experiments/results/best_model.joblib</code></pre>
+<p>It uses features from satellite data (NDVI, spectral bands), weather (precip, temp, solar, GDD), and soil (pH, OC, clay).</p>
+
+<h3>Farmer Inputs → Model Features</h3>
+<p>Since farmers don't provide satellite data, <code>predict_ml.py</code> maps their inputs to the model's expected feature space:</p>
+<table>
+  <tr><th>Farmer Input</th><th>Model Features</th></tr>
+  <tr><td>Soil type</td><td>soil_pH, soil_OC, soil_clay (from SOIL_PARAMS mapping)</td></tr>
+  <tr><td>Rainfall (mm)</td><td>precip_sum (scaled to training range ~150–300)</td></tr>
+  <tr><td>Temperature (°C)</td><td>temp_mean, gdd_sum (GDD base 5°C)</td></tr>
+  <tr><td>Solar (W/m²)</td><td>solar_sum (scaled to training range)</td></tr>
+  <tr><td>—</td><td>ndvi_peak, cumulative_ndvi, etc. (derived from rain/temp)</td></tr>
+  <tr><td>—</td><td>B2–B12, pca_0–2 (training median; no satellite data)</td></tr>
+</table>
+
+<h3>Feature Order (24 features)</h3>
+<pre><code>ndvi_peak, season_length, cumulative_ndvi, ndvi_grain_fill_slope,
+precip_sum, temp_mean, solar_sum, gdd_sum, soil_pH, soil_OC, soil_clay,
+B2, B3, B4, B8, B11, B12, pca_0, pca_1, pca_2,
+ndvi_peak_x_precip_sum, ndvi_peak_x_gdd_sum, ndvi_peak_x_soil_OC, gdd_sum_x_precip_sum</code></pre>
+
+<!-- ========== 7. API ========== -->
+<h2 id="api">7. API Reference</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+  <tr><td>POST</td><td>/predict</td><td>Submit prediction input, returns yield</td></tr>
+  <tr><td>GET</td><td>/history</td><td>Returns list of previous predictions</td></tr>
+  <tr><td>GET</td><td>/health</td><td>Health check</td></tr>
+</table>
+
+<h3>POST /predict</h3>
+<p><strong>Request body:</strong></p>
+<pre><code>{
+  "cropType": "Wheat",
+  "landArea": 5,
+  "soilType": "Loam",
+  "rainfall": 500,
+  "temperature": 20,
+  "solarRad": 150
+}</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code>{
+  "predictionId": "1",
+  "predictedYield": 8.0,
+  "totalYield": 40.0,
+  "unit": "tons",
+  "message": "ML model: 8.0 tons/ha × 5 ha = 40.0 tons"
+}</code></pre>
+
+<h3>GET /history</h3>
+<p><strong>Response:</strong></p>
+<pre><code>{
+  "predictions": [
+    {
+      "id": "1",
+      "timestamp": "2025-03-22T10:00:00.000Z",
+      "cropType": "Wheat",
+      "landArea": 5,
+      "soilType": "Loam",
+      "predictedYield": 8.0,
+      "totalYield": 40.0
+    }
+  ]
+}</code></pre>
+
+<!-- ========== 8. SETUP ========== -->
+<h2 id="setup">8. Setup & Run Instructions</h2>
+<h3>Prerequisites</h3>
+<ul>
+  <li>Node.js 18+</li>
+  <li>Python 3.9+ (with project venv)</li>
+  <li>Trained model: run <code>python main.py</code> in main project first</li>
+</ul>
+
+<h3>Step 1: Train the ML Model (once)</h3>
+<pre><code>cd Satellite-Based Precision Agriculture
+source venv/bin/activate  # or: venv\Scripts\activate on Windows
+python main.py</code></pre>
+<p>This creates <code>experiments/results/best_model.joblib</code> and <code>data/features.csv</code>.</p>
+
+<h3>Step 2: Install Backend Dependencies</h3>
+<pre><code>cd crop-prediction-webapp/backend
+npm install</code></pre>
+
+<h3>Step 3: Install Frontend Dependencies</h3>
+<pre><code>cd crop-prediction-webapp/frontend
+npm install</code></pre>
+
+<h3>Step 4: Start Backend</h3>
+<pre><code>cd crop-prediction-webapp/backend
+npm start</code></pre>
+<p>Backend runs at <code>http://localhost:4000</code>.</p>
+
+<h3>Step 5: Start Frontend (new terminal)</h3>
+<pre><code>cd crop-prediction-webapp/frontend
+npm run dev</code></pre>
+<p>Frontend runs at <code>http://localhost:3000</code>. Open in browser.</p>
+
+<h3>Quick Test</h3>
+<pre><code>curl -X POST http://localhost:4000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"cropType":"Wheat","landArea":5,"soilType":"Loam","rainfall":500,"temperature":20,"solarRad":150}'</code></pre>
+
+<div class="footer">
+  <p><strong>Crop Yield Predictor</strong> – Satellite-Based Precision Agriculture</p>
+  <p>Documentation generated for the project. Save as PDF: File → Print → Save as PDF</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.venv
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Data (large files)
+data/*.csv
+data/*.geojson
+data/*.tif
+data/*.nc
+!data/README.md
+
+# Experiments
+experiments/results/*.csv
+experiments/results/*.png
+experiments/hyperparameters/*.json
+*.joblib
+*.pkl
+*.pickle
+
+# Reports
+reports/*.aux
+reports/*.bbl
+reports/*.blg
+reports/*.log
+reports/*.out
+reports/*.toc
+reports/*.fls
+reports/*.fdb_latexmk
+reports/*.synctex.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# GEE credentials (never commit)
+.earth_engine_credentials
+*.credentials.json
