@@ -1,18 +1,20 @@
 /**
- * Error message display - accessible and visible
+ * Error message display - farmer-friendly, accessible
  */
 export default function ErrorMessage({ message, onRetry }) {
   return (
     <div
       role="alert"
-      className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800"
+      className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 text-amber-900 animate-fade-up"
     >
-      <p className="font-medium">Something went wrong</p>
-      <p className="text-sm mt-1">{message}</p>
+      <p className="flex items-center gap-2 font-bold">
+        <span className="text-xl">⚠️</span> Oops, something went wrong
+      </p>
+      <p className="text-sm mt-2 text-amber-800">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-3 px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+          className="mt-4 px-4 py-2 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 transition"
         >
           Try again
         </button>

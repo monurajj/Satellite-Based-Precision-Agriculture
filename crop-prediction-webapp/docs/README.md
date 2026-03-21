@@ -1,27 +1,19 @@
 # Documentation
 
-## Project Documentation (PDF)
+## Project Documentation
 
 The **Project-Documentation.html** file contains the complete project documentation covering:
 - System architecture
-- Workflow and data flow
-- Frontend & backend details
-- ML model integration
-- API reference
-- Setup instructions
+- End-to-end workflow and data flow
+- Frontend (React) structure and how it links to backend
+- Backend (Node.js) and Python ML integration
+- API reference and setup instructions
 
-### How to Create PDF
+### How to Create PDF (Recommended)
 
-**Option A: Browser (works on any system)**  
-1. Open `Project-Documentation.html` in Chrome, Firefox, or Safari  
-2. Press `Ctrl+P` (Windows/Linux) or `Cmd+P` (Mac)  
-3. Choose **Save as PDF** or **Print to PDF**  
-4. Save the file
+1. Open `Project-Documentation.html` in Chrome, Firefox, or Safari
+2. Press `Ctrl+P` (Windows/Linux) or `Cmd+P` (Mac)
+3. In the print dialog, choose **Save as PDF** or **Print to PDF**
+4. Save the file (e.g. as `Project-Documentation.pdf`)
 
-**Option B: Automated script**  
-From the `crop-prediction-webapp` folder:
-```bash
-npm install
-npm run docs:pdf
-```
-This generates `Project-Documentation.pdf` in the `docs/` folder (requires Puppeteer).
+This works on any system and produces a professional, printable PDF.
