@@ -70,3 +70,13 @@ Thumbs.db
 # GEE credentials (never commit)
 .earth_engine_credentials
 *.credentials.json
+
+# Web app
+crop-prediction-webapp/backend/data/
+node_modules/
+
+# Build artifacts
+reports/*.zip
+reports/*.pdf
+*.pdf
+reports_for_overleaf.zip
