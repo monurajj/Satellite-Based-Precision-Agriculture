@@ -74,6 +74,9 @@ Table~\ref{tab:data_sources} summarizes our data sources. \textbf{Sentinel-2 L2A
 \end{equation}
 where $P$ is cumulative precipitation, $S$ is solar sum, OC is organic carbon, and $\varepsilon \sim \mathcal{N}(0, \sigma^2)$.
 
+\subsection{Dataset Size (Default Synthetic Pipeline)}
+When \texttt{main.py} generates synthetic data (100 fields, 13 ten-day composites per growing season), \texttt{merged\_data.csv} contains $\sim$1{,}300 rows $\times$ 19 columns (field--date time series). After feature engineering, \texttt{features.csv} has 100 rows $\times$ 26 columns (one row per field). Custom \texttt{merged\_data.csv} files follow the same schema with user-specific row counts; see \texttt{data/README.md}.
+
 \subsection{Preprocessing}
 
 Cloud masking uses QA60 bits 10 and 11. We resample to 10\,m where needed, extract mean spectral values per composite, and linearly interpolate missing dates. Yield is aligned to the satellite observation year to avoid leakage. The study region is Kansas, USA (ROI: $38.5^\circ$N, $97.5^\circ$W to $39.0^\circ$N, $97.0^\circ$W).

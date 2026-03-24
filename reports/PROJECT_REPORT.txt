@@ -51,6 +51,15 @@ SoilGrids      | pH, organic carbon, clay content               | 250 m      | G
 Yield          | USDA NASS or synthetic                         | Field/Co.  | NASS/Generated
 ------------------------------------------------------------------------------
 
+2.1.1 Dataset size (default synthetic pipeline)
+
+When merged_data.csv is produced by main.py from synthetic data (100 fields, 13 ten-day composite dates per field):
+
+• merged_data.csv: approximately 1,300 rows × 19 columns (time-series, one row per field-date).
+• features.csv: 100 rows × 26 columns (one row per field after aggregation and feature engineering; includes field_id, features, and yield).
+
+If you provide your own merged_data.csv, row counts follow your data; the schema remains as documented in data/README.md.
+
 Sentinel-2 L2A provides atmospherically corrected reflectances. We use QA60 bits 10 and 11 for cloud masking and build 10-day median composites to reduce noise. ERA5 supplies daily temperature, precipitation, and solar radiation. SoilGrids provides static soil properties per field. Yield labels come from USDA NASS when available, or from synthetic generation based on agronomic relationships:
 
     y = a · NDVI_max + b · P + c · S + d · OC + ε

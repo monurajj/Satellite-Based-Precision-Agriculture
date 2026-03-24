@@ -22,7 +22,7 @@ Precision agriculture relies on data-driven decisions. Traditional yield estimat
 
 ## Approach
 
-1. **Data** – Sentinel-2 (10–20 m), ERA5 weather, SoilGrids soil properties; synthetic fallback when GEE unavailable.  
+1. **Data** – Sentinel-2 (10–20 m), ERA5 weather, SoilGrids soil properties; synthetic fallback when GEE unavailable. Default synthetic run: **~1,300 rows × 19 columns** (`merged_data.csv`), **100 rows × 26 columns** (`features.csv`). See `data/README.md`.  
 2. **Features** – Phenological metrics from NDVI (SOS, EOS, peak, grain-filling slope), weather aggregates, soil, PCA, interactions.  
 3. **Models** – Linear Regression baseline, Random Forest, XGBoost; 5-fold spatial cross-validation (GroupKFold by field) to avoid autocorrelation bias.  
 4. **Deployment** – Trained model served via Node.js API; React frontend with location-based weather (Open-Meteo), persistent history, dashboard.
