@@ -1,84 +1,109 @@
 /**
- * Layout - Sticky navbar + main content
- * Business-ready navigation with clear CTAs
+ * Layout - Clean agriculture-themed navbar + footer
  */
 import { Link, useLocation } from 'react-router-dom';
-import CropDecoration from './CropDecoration';
+import { useState } from 'react';
 
 const navItems = [
   { path: '/', label: 'Home' },
+  { path: '/predict', label: 'Yield Prediction', badge: 'ML' },
+  { path: '/classify', label: 'Land Cover', badge: 'DL' },
 ];
 
 export default function Layout({ children }) {
   const location = useLocation();
-  const isHome = location.pathname === '/';
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 bg-farm-green text-white shadow-lg overflow-hidden">
-        {/* Subtle grain texture */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,_white_0%,_transparent_50%)]" aria-hidden />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6">
+    <div className="min-h-screen flex flex-col bg-stone-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-green-100/50 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            <Link
-              to="/"
-              className="flex items-center gap-2.5 text-lg sm:text-xl font-bold text-white hover:text-farm-harvest transition-colors shrink-0"
-            >
-              <span className="text-2xl sm:text-3xl" style={{ animation: 'sway 3s ease-in-out infinite' }}>
-                🌾
-              </span>
-              <span className="sm:hidden">Yield Predictor</span>
-              <span className="hidden sm:inline">Crop Yield Predictor</span>
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-500 flex items-center justify-center shadow-md shadow-green-600/20 group-hover:shadow-green-600/30 transition-all duration-300 group-hover:scale-105">
+                <span className="text-white text-lg">🌾</span>
+              </div>
+              <div className="hidden sm:block">
+                <span className="text-base font-extrabold text-green-900 tracking-tight">AgriSat</span>
+                <span className="text-[10px] text-green-600/60 block -mt-0.5 font-semibold tracking-wider uppercase">Precision Agriculture</span>
+              </div>
             </Link>
 
-            <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main navigation">
-              {navItems.map(({ path, label }) => {
-                const isActive = path === '/' && isHome;
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map(({ path, label, badge }) => {
+                const isActive = location.pathname === path;
                 return (
                   <Link
                     key={path}
                     to={path}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 ${
+                    className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
                       isActive
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/90 hover:bg-white/15 hover:text-white'
+                        ? 'bg-green-50 text-green-800 shadow-sm'
+                        : 'text-gray-500 hover:text-green-800 hover:bg-green-50/50'
                     }`}
                   >
                     {label}
+                    {badge && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                        isActive
+                          ? badge === 'DL' ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-400'
+                      }`}>
+                        {badge}
+                      </span>
+                    )}
+                    {isActive && <span className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-8 h-0.5 bg-green-500 rounded-full" />}
                   </Link>
                 );
               })}
-              <Link
-                to="/predict"
-                className="ml-2 sm:ml-4 px-4 sm:px-5 py-2.5 bg-farm-harvest text-farm-green font-bold rounded-lg text-sm sm:text-base hover:bg-white hover:scale-[1.02] active:scale-100 transition-all shadow-md"
-              >
-                Get Prediction
-              </Link>
             </nav>
+
+            {/* Mobile */}
+            <button
+              className="md:hidden p-2 rounded-xl text-gray-500 hover:text-green-800 hover:bg-green-50"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+              </svg>
+            </button>
           </div>
+
+          {mobileOpen && (
+            <div className="md:hidden pb-4 pt-2 space-y-1 animate-fade-in">
+              {navItems.map(({ path, label, badge }) => (
+                <Link key={path} to={path} onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-3 rounded-xl text-sm font-semibold ${
+                    location.pathname === path ? 'bg-green-50 text-green-800' : 'text-gray-500'
+                  }`}>
+                  {label} {badge && <span className="text-xs opacity-50 ml-1">({badge})</span>}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-        <CropDecoration />
       </header>
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-green-200 bg-gradient-to-b from-white to-farm-light/50 py-8 text-center">
-        <div className="mb-4">
-          <Link
-            to="/predict"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-farm-green text-white font-bold rounded-xl hover:bg-green-800 hover:scale-105 transition-all shadow-lg"
-          >
-            Start Free Prediction
-          </Link>
+      {/* Footer */}
+      <footer className="bg-green-900 text-green-200/60 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🌾</span>
+            <span className="text-sm font-bold text-white">AgriSat</span>
+          </div>
+          <div className="flex items-center gap-6 text-sm">
+            <Link to="/predict" className="hover:text-white transition-colors">Yield Prediction</Link>
+            <Link to="/classify" className="hover:text-white transition-colors">Land Cover</Link>
+          </div>
+          <p className="text-xs">Satellite & AI-powered precision agriculture</p>
         </div>
-        <p className="flex items-center justify-center gap-2 flex-wrap text-sm text-farm-muted">
-          <span>🌿 Satellite & AI-powered yield intelligence</span>
-          <span className="hidden sm:inline">·</span>
-          <span>Free for farmers</span>
-        </p>
-        <p className="mt-2 text-xs text-farm-muted/80">Predictions saved automatically. No sign-up required.</p>
       </footer>
     </div>
   );

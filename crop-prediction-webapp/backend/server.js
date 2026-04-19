@@ -25,6 +25,8 @@ const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 const VENV_PYTHON = path.join(PROJECT_ROOT, 'venv', 'bin', 'python');
 const PYTHON = fs.existsSync(VENV_PYTHON) ? VENV_PYTHON : 'python3';
 const PREDICT_SCRIPT = path.join(__dirname, 'predict_ml.py');
+const CLASSIFY_SCRIPT = path.join(__dirname, 'predict_dl.py');
+const SAMPLE_IMAGES_DIR = path.join(__dirname, 'sample_images');
 
 /**
  * Call Python ML prediction script
@@ -65,9 +67,48 @@ function callMLPredict(input) {
   });
 }
 
+/**
+ * Call Python DL classification script
+ */
+function callDLClassify(input) {
+  return new Promise((resolve, reject) => {
+    const py = spawn(PYTHON, [CLASSIFY_SCRIPT], {
+      cwd: PROJECT_ROOT,
+      env: { ...process.env, PYTHONUNBUFFERED: '1' },
+    });
+    let stdout = '';
+    let stderr = '';
+    py.stdout.on('data', (d) => { stdout += d; });
+    py.stderr.on('data', (d) => { stderr += d; });
+    py.on('close', (code) => {
+      if (code !== 0) {
+        let errMsg = 'DL classification failed';
+        try {
+          const parsed = JSON.parse(stderr.trim());
+          if (parsed.error) errMsg = parsed.error;
+        } catch {
+          if (stderr) errMsg = stderr.split('\n').pop() || stderr.slice(0, 200);
+        }
+        reject(new Error(errMsg));
+        return;
+      }
+      try {
+        resolve(JSON.parse(stdout));
+      } catch {
+        reject(new Error('Invalid DL response'));
+      }
+    });
+    py.on('error', (err) => {
+      reject(new Error(`Python not found: ${err.message}`));
+    });
+    py.stdin.write(JSON.stringify(input));
+    py.stdin.end();
+  });
+}
+
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 /**
  * Weather routes - support both /weather/* and /api/weather/* (for proxy flexibility)
@@ -249,6 +290,63 @@ app.get('/history', (req, res) => {
   } catch (err) {
     console.error('History error:', err);
     res.status(500).json({ error: 'Failed to fetch prediction history.' });
+  }
+});
+
+/**
+ * POST /classify
+ * Body: { imagePath: "path" } OR { imageBase64: "base64string" }
+ * Returns: { predictedClass, confidence, description, classProbabilities, gradcam }
+ */
+app.post('/classify', async (req, res) => {
+  try {
+    const { imagePath, imageBase64 } = req.body;
+    if (!imagePath && !imageBase64) {
+      return res.status(400).json({ error: 'Provide imagePath or imageBase64.' });
+    }
+    const input = imagePath ? { imagePath } : { imageBase64 };
+    const result = await callDLClassify(input);
+    if (result.error) {
+      return res.status(500).json({ error: result.error });
+    }
+    res.json(result);
+  } catch (err) {
+    console.error('Classify error:', err);
+    res.status(500).json({ error: err.message || 'Classification failed.' });
+  }
+});
+
+/**
+ * GET /sample-images
+ * Returns list of available sample satellite images grouped by class
+ */
+app.get('/sample-images', (req, res) => {
+  try {
+    const samples = {};
+    if (fs.existsSync(SAMPLE_IMAGES_DIR)) {
+      const files = fs.readdirSync(SAMPLE_IMAGES_DIR).filter(f => f.endsWith('.jpg') || f.endsWith('.png'));
+      for (const file of files) {
+        const className = file.replace(/_\d+\.jpg$/, '').replace(/_\d+\.png$/, '');
+        if (!samples[className]) samples[className] = [];
+        samples[className].push(file);
+      }
+    }
+    res.json({ samples });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to list sample images.' });
+  }
+});
+
+/**
+ * GET /sample-images/:filename
+ * Serve a specific sample image
+ */
+app.get('/sample-images/:filename', (req, res) => {
+  const filePath = path.join(SAMPLE_IMAGES_DIR, req.params.filename);
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: 'Image not found.' });
   }
 });
 

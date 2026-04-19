@@ -1,310 +1,231 @@
 /**
- * Dashboard - Business-oriented landing: Hero, What We Provide, CTAs, History
+ * Dashboard - Agriculture-themed landing page with polish
  */
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Card from '../components/Card';
-import LoadingSpinner from '../components/LoadingSpinner';
-import ErrorMessage from '../components/ErrorMessage';
-import EmptyState from '../components/EmptyState';
+import { useState, useEffect } from 'react';
 import { fetchHistory } from '../api/predictions';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from 'recharts';
+import FloatingLeaves from '../components/FloatingLeaves';
 
-const PIE_COLORS = ['#2d5016', '#4a7c23', '#6b9c3a', '#8bbc52', '#a8d96e'];
-
-const WHAT_WE_PROVIDE = [
+const features = [
   {
-    icon: '📊',
-    title: 'Yield Prediction',
-    desc: 'AI-powered crop yield estimates combining soil, weather, and satellite data. Plan harvests and optimize inputs with data-driven insights.',
+    icon: '🌾', title: 'Crop Yield Prediction',
+    desc: 'Predict harvest output using XGBoost trained on weather, soil, and satellite-derived vegetation indices.',
+    link: '/predict', badge: 'Phase 1 · ML', badgeColor: 'bg-green-100 text-green-700',
+    stat: 'R² = 0.85',
   },
   {
-    icon: '🛰️',
-    title: 'Satellite Analytics',
-    desc: 'NDVI and earth observation data integrated into our models. Get precision insights without costly sensors or fieldwork.',
+    icon: '🛰️', title: 'Land Cover Classification',
+    desc: 'Classify Sentinel-2 satellite imagery into 10 land cover types with attention-based deep learning.',
+    link: '/classify', badge: 'Phase 2 · DL', badgeColor: 'bg-indigo-100 text-indigo-600',
+    stat: '98.2% Accuracy',
   },
   {
-    icon: '🌤️',
-    title: 'Weather Integration',
-    desc: 'Automatic weather data for your location—rainfall, temperature, solar radiation—or enter values manually for any region.',
+    icon: '🔬', title: 'Grad-CAM Explainability',
+    desc: 'See exactly which regions of satellite imagery the neural network focuses on for each prediction.',
+    link: '/classify', badge: 'Interpretability', badgeColor: 'bg-amber-100 text-amber-700',
+    stat: 'Visual Heatmaps',
   },
   {
-    icon: '📈',
-    title: 'History & Analytics',
-    desc: 'All predictions saved automatically. Track yields by crop, visualize trends, and make better decisions season after season.',
+    icon: '📊', title: '4 Model Architectures',
+    desc: 'Compare CNN, ResNet-50 + SE Attention, Vision Transformer, and custom SSAM side by side.',
+    link: '/classify', badge: 'Benchmarks', badgeColor: 'bg-sky-100 text-sky-700',
+    stat: 'Ablation Studies',
   },
 ];
 
 export default function Dashboard() {
-  const [predictions, setPredictions] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadHistory();
+    fetchHistory().then(setHistory).catch(() => {}).finally(() => setLoading(false));
   }, []);
-
-  // Scroll to hash (e.g. #what-we-provide) when navigating from another page
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const el = document.querySelector(hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, []);
-
-  async function loadHistory() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchHistory();
-      setPredictions(data);
-    } catch (err) {
-      setError(err.message || 'Failed to load history.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Chart data: yield by crop type
-  const cropYieldData = predictions.reduce((acc, p) => {
-    const crop = p.cropType || 'Other';
-    const existing = acc.find((x) => x.name === crop);
-    if (existing) {
-      existing.total += p.totalYield || 0;
-      existing.count += 1;
-    } else {
-      acc.push({ name: crop, total: p.totalYield || 0, count: 1 });
-    }
-    return acc;
-  }, []);
-
-  const pieData = cropYieldData.map((d) => ({ name: d.name, value: d.total }));
 
   return (
-    <div className="space-y-0">
-      {/* ========== HERO SECTION ========== */}
-      <section className="relative w-[100vw] max-w-none -ml-[calc(50vw-50%)] -mt-4 sm:-mt-6 overflow-hidden rounded-b-3xl shadow-2xl">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/imagefiles/image.png"
-            alt="Satellite view of farmland"
-            className="w-full h-full object-cover min-h-[420px] sm:min-h-[480px]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/85" />
+    <div>
+      {/* ===== HERO ===== */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-green-800 via-green-700 to-emerald-600 min-h-[70vh] flex items-center">
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute bottom-10 -left-20 w-64 h-64 bg-green-300/15 rounded-full blur-3xl animate-float" />
+          <div className="absolute top-1/2 right-1/3 w-40 h-40 bg-yellow-300/10 rounded-full blur-2xl" />
         </div>
-        <div className="relative z-10 px-6 py-20 sm:py-24 lg:py-32 max-w-4xl mx-auto text-center">
-          <p className="text-farm-harvest font-bold uppercase tracking-[0.2em] text-sm mb-4 animate-fade-up">
-            AgTech · Precision Agriculture
-          </p>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white leading-[1.1] mb-5 animate-fade-up" style={{ animationDelay: '50ms' }}>
-            Data-Driven Yield Intelligence for Modern Farmers
-          </h1>
-          <p className="text-gray-200 text-lg sm:text-xl lg:text-2xl max-w-2xl mx-auto mb-10 animate-fade-up leading-relaxed" style={{ animationDelay: '100ms' }}>
-            Reduce uncertainty. Maximize harvests. Our AI combines satellite imagery, weather, and soil data to deliver accurate yield predictions—so you can plan with confidence.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: '150ms' }}>
-            <Link
-              to="/predict"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-farm-harvest text-farm-green font-bold rounded-xl hover:bg-white hover:scale-105 active:scale-100 transition-all shadow-xl hover:shadow-2xl text-lg"
-            >
-              Start Free Prediction →
-            </Link>
-            <a
-              href="#what-we-provide"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/15 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-white/40 hover:bg-white/25 hover:scale-105 active:scale-100 transition-all text-lg"
-            >
-              Learn What We Offer
-            </a>
+        <FloatingLeaves />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20">
+          <div className="max-w-3xl">
+            <div className="animate-fade-up inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-sm text-green-100 mb-8 border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse-soft" />
+              Satellite-Based Precision Agriculture
+            </div>
+
+            <h1 className="animate-fade-up delay-100 text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-6 tracking-tight">
+              Smart Farming with
+              <br />
+              <span className="text-green-200">AI & Satellite Data</span>
+            </h1>
+
+            <p className="animate-fade-up delay-200 text-lg sm:text-xl text-green-100/80 mb-10 max-w-xl leading-relaxed">
+              Predict crop yields with machine learning. Classify land cover from satellite imagery with deep learning. Powered by Sentinel-2.
+            </p>
+
+            <div className="animate-fade-up delay-300 flex flex-wrap gap-4">
+              <Link
+                to="/predict"
+                className="group px-7 py-3.5 bg-white text-green-800 font-bold rounded-2xl shadow-xl shadow-green-900/20 hover:shadow-2xl hover:shadow-green-900/30 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-2"
+              >
+                🌾 Predict Yield
+                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              <Link
+                to="/classify"
+                className="px-7 py-3.5 bg-white/15 backdrop-blur text-white font-semibold rounded-2xl border border-white/20 hover:bg-white/25 transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
+              >
+                🛰️ Classify Satellite Image
+              </Link>
+            </div>
           </div>
+        </div>
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 80" fill="none" className="w-full">
+            <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="rgb(250 250 249)" />
+          </svg>
         </div>
       </section>
 
-      {/* ========== WHAT WE PROVIDE ========== */}
-      <section id="what-we-provide" className="py-16 sm:py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-farm-green mb-3">
-            What We Provide
+      {/* ===== FEATURES ===== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        <div className="text-center mb-14">
+          <span className="text-green-600 text-sm font-bold tracking-wider uppercase">Capabilities</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2 mb-4">
+            Two Phases of Intelligence
           </h2>
-          <p className="text-farm-muted text-lg max-w-2xl mx-auto">
-            Enterprise-grade precision agriculture tools, designed for farmers who want to make smarter decisions.
+          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed">
+            Machine learning for yield prediction meets deep learning for satellite image analysis.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {WHAT_WE_PROVIDE.map((item, i) => (
-            <Card key={i} delay={i * 80} className="hover:border-farm-harvest/50">
-              <div className="flex items-start gap-4">
-                <span className="text-4xl flex-shrink-0">{item.icon}</span>
-                <div>
-                  <h3 className="text-xl font-bold text-farm-green mb-2">{item.title}</h3>
-                  <p className="text-farm-muted leading-relaxed">{item.desc}</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {features.map((f, i) => (
+            <Link
+              key={i}
+              to={f.link}
+              className="group card-farm p-6 animate-slide-up"
+              style={{ animationDelay: `${i * 80}ms` }}
+            >
+              <div className="flex items-start justify-between mb-5">
+                <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-green-100 transition-all duration-500">
+                  {f.icon}
                 </div>
+                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${f.badgeColor}`}>
+                  {f.badge}
+                </span>
               </div>
-            </Card>
+              <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors duration-300">
+                {f.title}
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">{f.desc}</p>
+              <div className="flex items-center justify-between pt-3 border-t border-green-50">
+                <span className="text-xs font-bold text-green-600">{f.stat}</span>
+                <svg className="w-4 h-4 text-gray-300 group-hover:text-green-500 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            </Link>
           ))}
         </div>
-        <div className="text-center mt-10">
-          <Link
-            to="/predict"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-farm-green text-white font-bold rounded-xl hover:bg-green-800 hover:scale-105 active:scale-100 transition-all shadow-lg"
-          >
-            Try It Now — Free
-          </Link>
-        </div>
       </section>
 
-      {/* ========== CTA BANNER ========== */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-farm-green to-green-800 rounded-2xl px-6 text-center text-white mb-12">
-        <h3 className="text-2xl sm:text-3xl font-bold mb-3">Ready to plan your harvest?</h3>
-        <p className="text-white/90 mb-6 max-w-xl mx-auto">Get your first yield prediction in under a minute. No sign-up required.</p>
-        <Link
-          to="/predict"
-          className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-farm-green font-bold rounded-xl hover:bg-farm-light hover:scale-105 active:scale-100 transition-all shadow-xl"
-        >
-          Get Yield Prediction
-        </Link>
-      </section>
-
-      {/* ========== DASHBOARD CONTENT ========== */}
-      <div id="dashboard" className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-up">
-          <div>
-            <h2 className="text-2xl font-bold text-farm-green flex items-center gap-2">
-              <span className="text-3xl">📊</span> Your Dashboard
-            </h2>
-            <p className="text-farm-muted mt-1">Track your crop predictions and yields</p>
-          </div>
-          <Link
-            to="/predict"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-farm-green text-white font-bold rounded-xl hover:bg-green-800 hover:scale-105 active:scale-100 transition-all shadow-lg hover:shadow-xl"
-          >
-            <span>🌱</span> New Prediction
-          </Link>
+      {/* ===== STATS ===== */}
+      <section className="bg-green-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-green-300 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-emerald-300 rounded-full blur-3xl" />
         </div>
-
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-16">
-          <LoadingSpinner size="lg" label="Loading your predictions..." />
-        </div>
-      ) : error ? (
-        <ErrorMessage message={error} onRetry={loadHistory} />
-      ) : (
-        <>
-          {/* Charts */}
-          {predictions.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 [&>*]:min-w-0">
-              <Card title="Yield by Crop (tons)" icon="📈" delay={0}>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={cropYieldData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                      <YAxis tick={{ fontSize: 12 }} />
-                      <Tooltip
-                        formatter={(value) => [`${value.toFixed(1)} tons`, 'Total yield']}
-                        contentStyle={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                      />
-                      <Bar dataKey="total" fill="#2d5016" radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
-
-              <Card title="Share by Crop" icon="🥧" delay={100}>
-                <div className="h-72 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="45%"
-                        innerRadius="40%"
-                        outerRadius="55%"
-                        paddingAngle={2}
-                        dataKey="value"
-                        nameKey="name"
-                      >
-                        {pieData.map((_, i) => (
-                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value) => [`${value.toFixed(1)} tons`, 'Yield']}
-                        contentStyle={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                      />
-                      <Legend
-                        verticalAlign="bottom"
-                        height={36}
-                        wrapperStyle={{ fontSize: '13px' }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {/* Predictions table */}
-          <Card title={`Prediction History (${predictions.length})`} icon="📋" delay={200}>
-            {predictions.length === 0 ? (
-              <EmptyState
-                title="No predictions yet"
-                message="Start by creating your first crop yield prediction. It only takes a minute!"
-              />
-            ) : (
-              <div className="overflow-x-auto -mx-2">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b-2 border-green-200">
-                      <th className="px-3 py-3 font-semibold text-gray-700">Date</th>
-                      <th className="px-3 py-3 font-semibold text-gray-700">Crop</th>
-                      <th className="px-3 py-3 font-semibold text-gray-700">Area (ha)</th>
-                      <th className="px-3 py-3 font-semibold text-gray-700">Soil</th>
-                      <th className="px-3 py-3 font-semibold text-gray-700">Yield (tons)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {predictions.map((p, i) => (
-                      <tr
-                        key={p.id}
-                        className="border-b border-green-100 hover:bg-farm-light/60 transition-colors duration-200"
-                        style={{
-                          animation: 'fade-up 0.4s ease-out forwards',
-                          animationDelay: `${300 + i * 50}ms`,
-                          opacity: 0,
-                        }}
-                      >
-                        <td className="px-3 py-3 text-sm">
-                          {p.timestamp
-                            ? new Date(p.timestamp).toLocaleDateString()
-                            : '—'}
-                        </td>
-                        <td className="px-3 py-3 font-medium">{p.cropType || '—'}</td>
-                        <td className="px-3 py-3">{p.landArea ?? '—'}</td>
-                        <td className="px-3 py-3">{p.soilType || '—'}</td>
-                        <td className="px-3 py-3 font-bold text-farm-green">
-                          {p.totalYield != null ? `${p.totalYield.toFixed(1)} tons` : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 relative">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: '98.2%', label: 'DL Accuracy', sub: 'EuroSAT Dataset' },
+              { value: 'R\u00B2 = 0.85', label: 'ML Score', sub: 'XGBoost Model' },
+              { value: '27K', label: 'Satellite Images', sub: 'Sentinel-2' },
+              { value: '4', label: 'DL Architectures', sub: 'CNN / ResNet / ViT / SSAM' },
+            ].map((s, i) => (
+              <div key={i} className="text-center animate-fade-up" style={{ animationDelay: `${i * 100}ms` }}>
+                <div className="text-3xl sm:text-4xl font-black text-white mb-1">{s.value}</div>
+                <div className="text-sm font-semibold text-green-200">{s.label}</div>
+                <div className="text-xs text-green-300/50 mt-0.5">{s.sub}</div>
               </div>
-            )}
-          </Card>
-        </>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== HISTORY ===== */}
+      {!loading && history.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Recent Predictions</h2>
+            <Link to="/predict" className="text-sm text-green-600 hover:text-green-700 font-semibold transition-colors">
+              New Prediction →
+            </Link>
+          </div>
+          <div className="card-farm overflow-hidden">
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-green-50/50 text-left text-gray-500 text-xs uppercase tracking-wider">
+                    <th className="px-5 py-3.5 font-semibold">Crop</th>
+                    <th className="px-5 py-3.5 font-semibold">Area</th>
+                    <th className="px-5 py-3.5 font-semibold">Soil</th>
+                    <th className="px-5 py-3.5 font-semibold">Yield</th>
+                    <th className="px-5 py-3.5 font-semibold">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-green-50">
+                  {history.slice(0, 5).map((p, i) => (
+                    <tr key={i} className="hover:bg-green-50/30 transition-colors">
+                      <td className="px-5 py-3.5 font-semibold text-gray-800">{p.cropType}</td>
+                      <td className="px-5 py-3.5 text-gray-500">{p.landArea} ha</td>
+                      <td className="px-5 py-3.5 text-gray-500">{p.soilType}</td>
+                      <td className="px-5 py-3.5 font-bold text-green-700">{p.predictedYield} t/ha</td>
+                      <td className="px-5 py-3.5 text-gray-500">{p.totalYield} t</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       )}
-      </div>
+
+      {/* ===== CTA ===== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-500 rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full blur-2xl" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white rounded-full blur-2xl" />
+          </div>
+          <div className="relative">
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-4">Ready to get started?</h2>
+            <p className="text-green-100/80 mb-8 max-w-md mx-auto">
+              Try our AI-powered tools for free. No sign-up required.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link to="/predict" className="px-8 py-3.5 bg-white text-green-800 font-bold rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                🌾 Predict Yield
+              </Link>
+              <Link to="/classify" className="px-8 py-3.5 bg-white/20 text-white font-semibold rounded-2xl border border-white/30 hover:bg-white/30 transition-all duration-300">
+                🛰️ Classify Image
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

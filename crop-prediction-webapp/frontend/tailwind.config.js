@@ -5,35 +5,17 @@ export default {
     extend: {
       colors: {
         farm: {
-          green: '#2d5016',
-          light: '#e8f5e0',
-          muted: '#6b7c5e',
-          earth: '#c9b896',
-          harvest: '#8bbc52',
-          soil: '#a0826d',
+          green: '#1a5c2e',
+          deep: '#14432a',
+          light: '#f0f9f0',
+          lime: '#e6f5e0',
+          muted: '#6b8c5e',
+          harvest: '#4ade80',
+          gold: '#f59e0b',
         },
       },
       fontFamily: {
-        sans: ['Nunito', 'DM Sans', 'system-ui', 'sans-serif'],
-      },
-      animation: {
-        sway: 'sway 3s ease-in-out infinite',
-        float: 'float 4s ease-in-out infinite',
-        'fade-up': 'fade-up 0.5s ease-out forwards',
-      },
-      keyframes: {
-        sway: {
-          '0%, 100%': { transform: 'rotate(-2deg)' },
-          '50%': { transform: 'rotate(2deg)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-6px)' },
-        },
-        'fade-up': {
-          from: { opacity: '0', transform: 'translateY(12px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

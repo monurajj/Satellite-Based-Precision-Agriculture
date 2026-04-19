@@ -90,3 +90,29 @@ export async function searchLocations(query) {
 export async function fetchWeather(lat, lon) {
   return request(`/weather/forecast?lat=${lat}&lon=${lon}`);
 }
+
+/**
+ * POST /classify - Classify a satellite image
+ * Body: { imageBase64 } or { imagePath }
+ * Returns { predictedClass, confidence, description, classProbabilities, gradcam }
+ */
+export async function classifyImage(imageData) {
+  return request('/classify', {
+    method: 'POST',
+    body: JSON.stringify(imageData),
+  });
+}
+
+/**
+ * GET /sample-images - List available sample satellite images
+ */
+export async function fetchSampleImages() {
+  return request('/sample-images');
+}
+
+/**
+ * Get sample image URL
+ */
+export function getSampleImageUrl(filename) {
+  return `${API_BASE}/sample-images/${filename}`;
+}
