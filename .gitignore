@@ -38,30 +38,30 @@ ENV/
 *.swo
 
 # Data (large files)
-data/*.csv
-data/*.geojson
-data/*.tif
-data/*.nc
-!data/README.md
+**/data/*.csv
+**/data/*.geojson
+**/data/*.tif
+**/data/*.nc
+!**/data/README.md
 
 # Experiments
-experiments/results/*.csv
-experiments/results/*.png
-experiments/hyperparameters/*.json
+**/experiments/results/*.csv
+**/experiments/results/*.png
+**/experiments/hyperparameters/*.json
 *.joblib
 *.pkl
 *.pickle
 
 # Reports
-reports/*.aux
-reports/*.bbl
-reports/*.blg
-reports/*.log
-reports/*.out
-reports/*.toc
-reports/*.fls
-reports/*.fdb_latexmk
-reports/*.synctex.gz
+**/reports/*.aux
+**/reports/*.bbl
+**/reports/*.blg
+**/reports/*.log
+**/reports/*.out
+**/reports/*.toc
+**/reports/*.fls
+**/reports/*.fdb_latexmk
+**/reports/*.synctex.gz
 
 # OS
 .DS_Store
@@ -80,3 +80,22 @@ reports/*.zip
 reports/*.pdf
 *.pdf
 reports_for_overleaf.zip
+
+# Phase2 DL - Large files (do NOT push)
+# EuroSAT dataset (27,000 images)
+Phase2_DL/data/eurosat/
+Phase2_DL/data/EuroSAT/
+Phase2_DL/data/*.zip
+Phase2_DL/data/split_indices.json
+
+# Model weights (.pth files are 100MB+ each)
+*.pth
+
+# Experiment results (figures & metrics are regenerated from notebooks)
+**/experiments/results/figures/
+**/experiments/results/models/
+**/experiments/results/metrics/
+
+# Claude internal
+.claude/plans/
+.claude/projects/

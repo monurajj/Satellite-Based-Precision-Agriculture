@@ -25,4 +25,4 @@ COPY . .
 ENV PYTHONPATH=/app
 
 # Default: run main pipeline
-CMD ["python", "main.py"]
+CMD ["python", "Phase1_ML/main.py"]

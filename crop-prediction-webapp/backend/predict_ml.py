@@ -10,7 +10,7 @@ from pathlib import Path
 
 # Project root for imports
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "Phase1_ML"))
 
 import numpy as np
 import pandas as pd
@@ -18,9 +18,9 @@ import joblib
 from sklearn.decomposition import PCA
 
 # Paths
-FEATURES_CSV = PROJECT_ROOT / "data" / "features.csv"
-MERGED_CSV = PROJECT_ROOT / "data" / "merged_data.csv"
-MODEL_PATH = PROJECT_ROOT / "experiments" / "results" / "best_model.joblib"
+FEATURES_CSV = PROJECT_ROOT / "Phase1_ML" / "data" / "features.csv"
+MERGED_CSV = PROJECT_ROOT / "Phase1_ML" / "data" / "merged_data.csv"
+MODEL_PATH = PROJECT_ROOT / "Phase1_ML" / "experiments" / "results" / "best_model.joblib"
 
 # Soil type -> (soil_pH, soil_OC, soil_clay) - from training data ranges
 SOIL_PARAMS = {

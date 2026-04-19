@@ -1,0 +1,33 @@
+# Phase 2: Deep Learning Dependencies
+# Install: pip install -r requirements.txt
+# Or auto-installed in Colab notebook
+
+# Core DL
+torch>=2.0.0
+torchvision>=0.15.0
+timm>=0.9.0                  # Pretrained ViT, ResNet variants
+
+# Satellite Data
+torchgeo>=0.5.0              # EuroSAT dataset loader (auto-download)
+rasterio>=1.3.0              # GeoTIFF reading for 13-band multispectral
+
+# ML & Metrics
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Interpretability
+pytorch-grad-cam>=1.5.0      # Grad-CAM visualizations
+shap>=0.42.0                 # SHAP feature importance
+umap-learn>=0.5.0            # UMAP embedding visualization
+
+# Training
+tqdm>=4.65.0
+tensorboard>=2.13.0          # Training curve visualization
+
+# Config
+pyyaml>=6.0

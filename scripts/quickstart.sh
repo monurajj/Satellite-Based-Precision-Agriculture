@@ -16,11 +16,11 @@ if [ ! -f venv/bin/activate ]; then
 fi
 source venv/bin/activate
 pip install -q -r requirements-minimal.txt
-python main.py
+python Phase1_ML/main.py
 echo ""
 
 # 2. Verify model exists
-if [ -f experiments/results/best_model.joblib ]; then
+if [ -f Phase1_ML/experiments/results/best_model.joblib ]; then
     echo "[2/2] Model saved. To run web app:"
     echo "  Terminal 1: cd crop-prediction-webapp/backend && npm install && npm start"
     echo "  Terminal 2: cd crop-prediction-webapp/frontend && npm install && npm run dev"

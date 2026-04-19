@@ -7,7 +7,8 @@ setup(
     version="1.0.0",
     description="Satellite-Based Precision Agriculture: Crop Yield Prediction",
     author="Author",
-    packages=find_packages(),
+    packages=find_packages(where="Phase1_ML"),
+    package_dir={"": "Phase1_ML"},
     python_requires=">=3.9",
     install_requires=[
         "pandas>=2.0.0",

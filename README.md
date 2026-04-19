@@ -4,7 +4,7 @@
 [![Node.js 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-End-to-end system for predicting winter wheat yield (tons/ha) at field level, one month before harvest. Combines satellite imagery, weather, and soil data with ML—plus a market-ready web app for farmers.
+End-to-end system for satellite-based precision agriculture combining machine learning and deep learning. **Phase 1** predicts winter wheat yield using ML (XGBoost, R²=0.85). **Phase 2** applies deep learning (CNN, ResNet+Attention, Vision Transformer) for satellite image-based land cover classification using EuroSAT/Sentinel-2 data.
 
 ---
 
@@ -37,7 +37,7 @@ Precision agriculture relies on data-driven decisions. Traditional yield estimat
 | Random Forest | 0.48 | 0.38 | 0.82 |
 | **XGBoost** | **0.45** | **0.35** | **0.85** |
 
-*5-fold spatial CV on synthetic Kansas wheat data. Run `python main.py` for your run.*
+*5-fold spatial CV on synthetic Kansas wheat data. Run `python Phase1_ML/main.py` for your run.*
 
 ---
 
@@ -51,7 +51,7 @@ cd "Satellite-Based Precision Agriculture"
 # Or: python -m venv venv && source venv/bin/activate && pip install -r requirements-minimal.txt && python main.py
 ```
 
-This creates `data/merged_data.csv`, `data/features.csv`, and `experiments/results/best_model.joblib`.
+This creates `Phase1_ML/data/merged_data.csv`, `Phase1_ML/data/features.csv`, and `Phase1_ML/experiments/results/best_model.joblib`.
 
 ### 2. Run the web app
 
@@ -79,38 +79,55 @@ Satellite-Based Precision Agriculture/
 ├── requirements.txt          # Full deps (GEE, notebooks)
 ├── requirements-minimal.txt  # Pipeline only (pandas, sklearn, xgboost)
 ├── environment.yml           # Conda environment
-├── main.py                   # Full pipeline entry point
 ├── scripts/
 │   └── quickstart.sh         # One-command setup + train
-├── src/                      # ML pipeline (modular)
-│   ├── data_loader.py
-│   ├── preprocessing.py
-│   ├── features.py          # Phenological metrics, PCA, interactions
-│   ├── models.py            # LR, RF, XGBoost + GridSearchCV
-│   ├── evaluation.py
-│   ├── synthetic_data.py
-│   └── utils.py
-├── notebooks/                # Step-by-step exploration
-│   ├── 01_data_acquisition.ipynb
-│   ├── 02_eda.ipynb
-│   ├── 03_feature_engineering.ipynb
-│   └── 04_modeling.ipynb
-├── data/                     # CSV outputs (gitignored)
+│
+├── Phase1_ML/                # Phase 1: Machine Learning
+│   ├── main.py               # Full ML pipeline entry point
+│   ├── src/                   # ML pipeline (modular)
+│   │   ├── data_loader.py
+│   │   ├── preprocessing.py
+│   │   ├── features.py       # Phenological metrics, PCA, interactions
+│   │   ├── models.py         # LR, RF, XGBoost + GridSearchCV
+│   │   ├── evaluation.py
+│   │   ├── synthetic_data.py
+│   │   └── utils.py
+│   ├── notebooks/             # Step-by-step exploration
+│   │   ├── 01_data_acquisition.ipynb
+│   │   ├── 02_eda.ipynb
+│   │   ├── 03_feature_engineering.ipynb
+│   │   └── 04_modeling.ipynb
+│   ├── data/                  # CSV outputs (gitignored)
+│   ├── experiments/
+│   │   └── results/           # best_model.joblib, metrics
+│   ├── reports/
+│   │   ├── PROJECT_REPORT.tex
+│   │   └── figures/
+│   └── docs/
+│       └── RUBRIC_CHECKLIST.md
+│
+├── Phase2_DL/                # Phase 2: Deep Learning
+│   ├── PLAN.md               # DL approach, dataset, architecture plan
+│   ├── main.py               # DL pipeline entry point
+│   ├── requirements.txt      # DL-specific deps (PyTorch, timm, torchgeo)
+│   ├── src/                   # DL modules
+│   │   ├── dataset.py        # EuroSAT loader, transforms, splits
+│   │   ├── models.py         # CNN, ResNet+SE, ViT architectures
+│   │   ├── train.py          # Training loop, LR scheduling
+│   │   ├── evaluate.py       # Metrics, Grad-CAM, SHAP
+│   │   └── augmentation.py   # Satellite-specific augmentations
+│   ├── notebooks/             # Colab-ready notebooks
+│   │   └── Phase2_DL_Complete.ipynb
+│   ├── data/                  # EuroSAT dataset (auto-downloaded)
+│   ├── experiments/results/   # Saved models, metrics, figures
+│   ├── reports/figures/
+│   └── configs/
+│
+├── crop-prediction-webapp/   # Production web app (shared)
+│   ├── backend/              # Express + predict_ml.py
+│   ├── frontend/             # React, Vite, Tailwind
 │   └── README.md
-├── experiments/
-│   ├── results/             # best_model.joblib, metrics
-│   └── README.md
-├── crop-prediction-webapp/   # Production web app
-│   ├── backend/             # Express + predict_ml.py
-│   ├── frontend/            # React, Vite, Tailwind
-│   └── README.md
-├── reports/
-│   ├── PROJECT_REPORT.tex   # LaTeX report
-│   ├── PROJECT_REPORT.txt   # Plain text
-│   ├── generate_figures.py
-│   └── README.md
-└── docs/
-    └── RUBRIC_CHECKLIST.md
+└── .github/workflows/
 ```
 
 ---
@@ -120,23 +137,27 @@ Satellite-Based Precision Agriculture/
 ### Full pipeline
 
 ```bash
-python main.py
+python Phase1_ML/main.py
 ```
 
 Runs: data load/generation → feature engineering → train LR/RF/XGBoost → spatial CV → save best model.
 
 ### Step-by-step (notebooks)
 
-1. `01_data_acquisition.ipynb` – Fetch GEE data or generate synthetic  
-2. `02_eda.ipynb` – Exploratory analysis  
-3. `03_feature_engineering.ipynb` – Phenological metrics, PCA  
-4. `04_modeling.ipynb` – Models, CV, failure analysis  
+1. `Phase1_ML/notebooks/01_data_acquisition.ipynb` – Fetch GEE data or generate synthetic  
+2. `Phase1_ML/notebooks/02_eda.ipynb` – Exploratory analysis  
+3. `Phase1_ML/notebooks/03_feature_engineering.ipynb` – Phenological metrics, PCA  
+4. `Phase1_ML/notebooks/04_modeling.ipynb` – Models, CV, failure analysis  
+
+### Phase 2: Deep Learning (Colab)
+
+Upload `Phase2_DL/notebooks/Phase2_DL_Complete.ipynb` to Google Colab with GPU runtime. See `Phase2_DL/PLAN.md` for details.
 
 ### Web app
 
 - **Backend:** `crop-prediction-webapp/backend` – `npm start` (port 4000)  
 - **Frontend:** `crop-prediction-webapp/frontend` – `npm run dev` (port 3000)  
-- **ML:** Uses `experiments/results/best_model.joblib`; spawns `predict_ml.py` per request.
+- **ML:** Uses `Phase1_ML/experiments/results/best_model.joblib`; spawns `predict_ml.py` per request.
 
 ---
 
@@ -155,8 +176,8 @@ Runs: data load/generation → feature engineering → train LR/RF/XGBoost → s
 
 ## Report
 
-LaTeX report: `reports/PROJECT_REPORT.tex`  
-Plain text: `reports/PROJECT_REPORT.txt`
+LaTeX report: `Phase1_ML/reports/PROJECT_REPORT.tex`  
+Plain text: `Phase1_ML/reports/PROJECT_REPORT.txt`
 
 **PDF:** Overleaf (upload `reports/`), or local `pdflatex`, or GitHub Actions artifact.
 
