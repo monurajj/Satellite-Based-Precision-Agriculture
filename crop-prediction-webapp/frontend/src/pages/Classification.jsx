@@ -6,12 +6,13 @@ import { classifyImage, fetchSampleImages, getSampleImageUrl } from '../api/pred
 import FloatingLeaves from '../components/FloatingLeaves';
 
 const CLASS_COLORS = {
-  AnnualCrop: '#22c55e', Forest: '#166534', HerbaceousVegetation: '#86efac',
-  Highway: '#94a3b8', Industrial: '#f59e0b', Pasture: '#4ade80',
-  PermanentCrop: '#15803d', Residential: '#fb923c', River: '#38bdf8', SeaLake: '#0284c7',
+  Cropland: '#22c55e', Pasture: '#86efac', Vegetation: '#4ade80',
+  Forest: '#166534', Highway: '#94a3b8', Industrial: '#f59e0b',
+  Residential: '#fb923c', River: '#38bdf8', 'Water Body': '#0284c7',
+  Desert: '#d4a574', Mountain: '#78716c',
 };
 
-const AG_CLASSES = new Set(['AnnualCrop', 'PermanentCrop', 'Pasture', 'HerbaceousVegetation']);
+const AG_CLASSES = new Set(['Cropland', 'Pasture', 'Vegetation']);
 
 export default function Classification() {
   const [samples, setSamples] = useState({});
