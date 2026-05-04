@@ -99,3 +99,15 @@ Phase2_DL/data/split_indices.json
 # Claude internal
 .claude/plans/
 .claude/projects/
+
+# Internal planning / explanation docs — DO NOT PUSH
+**/PLAN.md
+**/IMPLEMENTATION_PLAN.md
+**/IMPLEMENTATION_NOTES.md
+**/*_Explanation.md
+**/*_Plan.md
+**/PRESENTATION_GUIDE.md
+
+# Overleaf bundle (regenerable from .tex + figures/)
+**/Phase3_Report_Overleaf.zip
+**/*_Overleaf.zip

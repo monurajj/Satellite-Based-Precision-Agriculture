@@ -1,0 +1,106 @@
+{
+  "states": [
+    "Karnataka",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Punjab",
+    "Uttar Pradesh"
+  ],
+  "districts_by_state": {
+    "Karnataka": [
+      "Bangalore",
+      "Belgaum",
+      "Hubli",
+      "Mangalore",
+      "Mysore"
+    ],
+    "Madhya Pradesh": [
+      "Bhopal",
+      "Gwalior",
+      "Indore",
+      "Jabalpur",
+      "Ujjain"
+    ],
+    "Maharashtra": [
+      "Aurangabad",
+      "Kolhapur",
+      "Nagpur",
+      "Nashik",
+      "Pune",
+      "Solapur"
+    ],
+    "Punjab": [
+      "Amritsar",
+      "Bathinda",
+      "Ferozepur",
+      "Jalandhar",
+      "Ludhiana",
+      "Mohali",
+      "Patiala",
+      "Sangrur"
+    ],
+    "Uttar Pradesh": [
+      "Agra",
+      "Allahabad",
+      "Bareilly",
+      "Kanpur",
+      "Lucknow",
+      "Meerut",
+      "Varanasi"
+    ]
+  },
+  "crops_by_season": {
+    "Kharif": [
+      "Bajra",
+      "Cotton",
+      "Jowar",
+      "Maize",
+      "Pigeon Pea",
+      "Ragi",
+      "Rice",
+      "Soybean",
+      "Sugarcane"
+    ],
+    "Rabi": [
+      "Chickpea",
+      "Mustard",
+      "Wheat"
+    ]
+  },
+  "all_crops": [
+    "Bajra",
+    "Chickpea",
+    "Cotton",
+    "Jowar",
+    "Maize",
+    "Mustard",
+    "Pigeon Pea",
+    "Ragi",
+    "Rice",
+    "Soybean",
+    "Sugarcane",
+    "Wheat"
+  ],
+  "seasons": [
+    "Kharif",
+    "Rabi"
+  ],
+  "year_range": [
+    2000,
+    2023
+  ],
+  "avg_yield_by_crop": {
+    "Rice": 3.03,
+    "Maize": 3.34,
+    "Jowar": 1.12,
+    "Bajra": 1.35,
+    "Ragi": 1.68,
+    "Pigeon Pea": 1.13,
+    "Soybean": 1.35,
+    "Cotton": 0.56,
+    "Sugarcane": 78.34,
+    "Wheat": 3.83,
+    "Chickpea": 1.24,
+    "Mustard": 1.35
+  }
+}

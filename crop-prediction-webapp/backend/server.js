@@ -26,7 +26,9 @@ const VENV_PYTHON = path.join(PROJECT_ROOT, 'venv', 'bin', 'python');
 const PYTHON = fs.existsSync(VENV_PYTHON) ? VENV_PYTHON : 'python3';
 const PREDICT_SCRIPT = path.join(__dirname, 'predict_ml.py');
 const CLASSIFY_SCRIPT = path.join(__dirname, 'predict_dl.py');
+const HYBRID_SCRIPT = path.join(__dirname, 'predict_hybrid.py');
 const SAMPLE_IMAGES_DIR = path.join(__dirname, 'sample_images');
+const PHASE3_METADATA_PATH = path.join(PROJECT_ROOT, 'Phase3_Hybrid', 'models', 'model_metadata.json');
 
 /**
  * Call Python ML prediction script
@@ -96,6 +98,45 @@ function callDLClassify(input) {
         resolve(JSON.parse(stdout));
       } catch {
         reject(new Error('Invalid DL response'));
+      }
+    });
+    py.on('error', (err) => {
+      reject(new Error(`Python not found: ${err.message}`));
+    });
+    py.stdin.write(JSON.stringify(input));
+    py.stdin.end();
+  });
+}
+
+/**
+ * Call Python Hybrid prediction script
+ */
+function callHybridPredict(input) {
+  return new Promise((resolve, reject) => {
+    const py = spawn(PYTHON, [HYBRID_SCRIPT], {
+      cwd: PROJECT_ROOT,
+      env: { ...process.env, PYTHONUNBUFFERED: '1' },
+    });
+    let stdout = '';
+    let stderr = '';
+    py.stdout.on('data', (d) => { stdout += d; });
+    py.stderr.on('data', (d) => { stderr += d; });
+    py.on('close', (code) => {
+      if (code !== 0) {
+        let errMsg = 'Hybrid prediction failed';
+        try {
+          const parsed = JSON.parse(stderr.trim());
+          if (parsed.error) errMsg = parsed.error;
+        } catch {
+          if (stderr) errMsg = stderr.split('\n').pop() || stderr.slice(0, 200);
+        }
+        reject(new Error(errMsg));
+        return;
+      }
+      try {
+        resolve(JSON.parse(stdout));
+      } catch {
+        reject(new Error('Invalid hybrid response'));
       }
     });
     py.on('error', (err) => {
@@ -347,6 +388,65 @@ app.get('/sample-images/:filename', (req, res) => {
     res.sendFile(filePath);
   } else {
     res.status(404).json({ error: 'Image not found.' });
+  }
+});
+
+/**
+ * GET /hybrid-metadata
+ * Returns dropdown options for the Phase 3 hybrid yield form:
+ * states, districts grouped by state, crops grouped by season.
+ */
+app.get('/hybrid-metadata', (req, res) => {
+  try {
+    if (!fs.existsSync(PHASE3_METADATA_PATH)) {
+      return res.status(503).json({
+        error: 'Phase 3 model not trained yet. Run Phase3_Hybrid notebook 01.',
+      });
+    }
+    const metadata = JSON.parse(fs.readFileSync(PHASE3_METADATA_PATH, 'utf8'));
+    res.json(metadata);
+  } catch (err) {
+    console.error('Hybrid metadata error:', err);
+    res.status(500).json({ error: 'Failed to load hybrid metadata.' });
+  }
+});
+
+/**
+ * POST /hybrid-yield
+ * Body: { state, district, crop, season, acres, imageBase64? }
+ * Returns: yieldPerHectare, totalProduction, soil, weather, insights, etc.
+ */
+app.post('/hybrid-yield', async (req, res) => {
+  try {
+    const { state, district, crop, season, acres, imageBase64 } = req.body;
+
+    if (!state || !district || !crop || !season || acres == null) {
+      return res.status(400).json({
+        error: 'Missing required fields: state, district, crop, season, acres.',
+      });
+    }
+    const acresNum = parseFloat(acres);
+    if (isNaN(acresNum) || acresNum <= 0) {
+      return res.status(400).json({ error: 'Acres must be a positive number.' });
+    }
+    if (acresNum > 10000) {
+      return res.status(400).json({ error: 'Acres value seems unrealistically large.' });
+    }
+
+    const input = {
+      state,
+      district,
+      crop,
+      season,
+      acres: acresNum,
+      ...(imageBase64 ? { imageBase64 } : {}),
+    };
+
+    const result = await callHybridPredict(input);
+    res.json(result);
+  } catch (err) {
+    console.error('Hybrid predict error:', err);
+    res.status(500).json({ error: err.message || 'Hybrid prediction failed.' });
   }
 });
 

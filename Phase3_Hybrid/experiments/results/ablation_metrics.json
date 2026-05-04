@@ -1,0 +1,146 @@
+{
+  "overall": {
+    "dl_only": {
+      "r2": 0.8726831493499767,
+      "mae": 1.6740046874214785,
+      "rmse": 7.732747833195467
+    },
+    "ml_only": {
+      "r2": 0.9715639221899327,
+      "mae": 1.0653426104093326,
+      "rmse": 3.6544813619750047
+    },
+    "hybrid": {
+      "r2": 0.9884806001755845,
+      "mae": 0.6799097701629652,
+      "rmse": 2.3259792202672283
+    }
+  },
+  "hybrid_improvement_over_best_individual_R2": 0.016916677985651773,
+  "mae_reduction_hybrid_vs_best": 0.3854328402463675,
+  "per_crop": [
+    {
+      "Crop": "Bajra",
+      "n": 153,
+      "DL_only_R2": -454.866,
+      "ML_only_R2": 0.308,
+      "Hybrid_R2": 0.802,
+      "DL_only_MAE": 0.692,
+      "ML_only_MAE": 0.178,
+      "Hybrid_MAE": 0.092
+    },
+    {
+      "Crop": "Chickpea",
+      "n": 150,
+      "DL_only_R2": -818.265,
+      "ML_only_R2": 0.318,
+      "Hybrid_R2": 0.814,
+      "DL_only_MAE": 0.788,
+      "ML_only_MAE": 0.167,
+      "Hybrid_MAE": 0.086
+    },
+    {
+      "Crop": "Cotton",
+      "n": 153,
+      "DL_only_R2": -6.305,
+      "ML_only_R2": -0.865,
+      "Hybrid_R2": 0.264,
+      "DL_only_MAE": 0.107,
+      "ML_only_MAE": 0.099,
+      "Hybrid_MAE": 0.049
+    },
+    {
+      "Crop": "Jowar",
+      "n": 146,
+      "DL_only_R2": -1.577,
+      "ML_only_R2": 0.031,
+      "Hybrid_R2": -0.694,
+      "DL_only_MAE": 0.196,
+      "ML_only_MAE": 0.177,
+      "Hybrid_MAE": 0.115
+    },
+    {
+      "Crop": "Maize",
+      "n": 164,
+      "DL_only_R2": -0.244,
+      "ML_only_R2": 0.377,
+      "Hybrid_R2": 0.798,
+      "DL_only_MAE": 0.546,
+      "ML_only_MAE": 0.433,
+      "Hybrid_MAE": 0.248
+    },
+    {
+      "Crop": "Mustard",
+      "n": 147,
+      "DL_only_R2": -495.047,
+      "ML_only_R2": 0.348,
+      "Hybrid_R2": 0.797,
+      "DL_only_MAE": 0.72,
+      "ML_only_MAE": 0.19,
+      "Hybrid_MAE": 0.098
+    },
+    {
+      "Crop": "Pigeon Pea",
+      "n": 153,
+      "DL_only_R2": -676.909,
+      "ML_only_R2": 0.257,
+      "Hybrid_R2": 0.355,
+      "DL_only_MAE": 0.651,
+      "ML_only_MAE": 0.151,
+      "Hybrid_MAE": 0.106
+    },
+    {
+      "Crop": "Ragi",
+      "n": 157,
+      "DL_only_R2": -0.224,
+      "ML_only_R2": 0.337,
+      "Hybrid_R2": 0.527,
+      "DL_only_MAE": 0.246,
+      "ML_only_MAE": 0.216,
+      "Hybrid_MAE": 0.144
+    },
+    {
+      "Crop": "Rice",
+      "n": 140,
+      "DL_only_R2": -0.257,
+      "ML_only_R2": 0.443,
+      "Hybrid_R2": 0.788,
+      "DL_only_MAE": 0.466,
+      "ML_only_MAE": 0.341,
+      "Hybrid_MAE": 0.22
+    },
+    {
+      "Crop": "Soybean",
+      "n": 133,
+      "DL_only_R2": -1.705,
+      "ML_only_R2": 0.306,
+      "Hybrid_R2": 0.788,
+      "DL_only_MAE": 0.246,
+      "ML_only_MAE": 0.176,
+      "Hybrid_MAE": 0.096
+    },
+    {
+      "Crop": "Sugarcane",
+      "n": 148,
+      "DL_only_R2": -1.077,
+      "ML_only_R2": 0.365,
+      "Hybrid_R2": 0.743,
+      "DL_only_MAE": 14.382,
+      "ML_only_MAE": 10.144,
+      "Hybrid_MAE": 6.604
+    },
+    {
+      "Crop": "Wheat",
+      "n": 142,
+      "DL_only_R2": -44.068,
+      "ML_only_R2": 0.39,
+      "Hybrid_R2": 0.78,
+      "DL_only_MAE": 1.132,
+      "ML_only_MAE": 0.571,
+      "Hybrid_MAE": 0.339
+    }
+  ],
+  "test_set_size": 1786,
+  "cnn_accuracy_assumed": 0.95,
+  "dl_feature_dim": 50
+}
