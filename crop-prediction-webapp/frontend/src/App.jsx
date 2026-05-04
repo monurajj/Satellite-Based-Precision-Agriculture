@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import PredictionForm from './pages/PredictionForm';
 import Results from './pages/Results';
 import Classification from './pages/Classification';
+import HybridYieldPrediction from './pages/HybridYieldPrediction';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/predict" element={<PredictionForm />} />
         <Route path="/results" element={<Results />} />
         <Route path="/classify" element={<Classification />} />
+        <Route path="/hybrid" element={<HybridYieldPrediction />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>

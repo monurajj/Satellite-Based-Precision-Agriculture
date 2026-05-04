@@ -14,6 +14,13 @@ Output (stdout JSON):
     yield/ha, total tons, soil, weather, CNN verification, insights, etc.
 """
 
+import os
+# Resolve OpenMP conflict between XGBoost (libomp) and PyTorch (libomp).
+# Without these, importing both libraries in the same process can deadlock
+# on macOS. Must be set BEFORE importing torch or xgboost.
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+
 import sys
 import json
 import base64
@@ -116,12 +123,13 @@ def run_cnn_classification(image_bytes):
             if _cnn_model is None:
                 return None
 
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+
         transform = transforms.Compose([
             transforms.Resize((64, 64)),
             transforms.ToTensor(),
             transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
         ])
-        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         tensor = transform(img).unsqueeze(0)
 
         with torch.no_grad():

@@ -8,6 +8,7 @@ const navItems = [
   { path: '/', label: 'Home' },
   { path: '/predict', label: 'Yield Prediction', badge: 'ML' },
   { path: '/classify', label: 'Land Cover', badge: 'DL' },
+  { path: '/hybrid', label: 'Hybrid Yield', badge: 'ML+DL' },
 ];
 
 export default function Layout({ children }) {
@@ -49,7 +50,11 @@ export default function Layout({ children }) {
                     {badge && (
                       <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
                         isActive
-                          ? badge === 'DL' ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-700'
+                          ? badge === 'DL'
+                            ? 'bg-indigo-100 text-indigo-600'
+                            : badge === 'ML+DL'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-green-100 text-green-700'
                           : 'bg-gray-100 text-gray-400'
                       }`}>
                         {badge}
@@ -101,6 +106,7 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-6 text-sm">
             <Link to="/predict" className="hover:text-white transition-colors">Yield Prediction</Link>
             <Link to="/classify" className="hover:text-white transition-colors">Land Cover</Link>
+            <Link to="/hybrid" className="hover:text-white transition-colors">Hybrid Yield</Link>
           </div>
           <p className="text-xs">Satellite & AI-powered precision agriculture</p>
         </div>

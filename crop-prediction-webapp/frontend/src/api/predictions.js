@@ -116,3 +116,23 @@ export async function fetchSampleImages() {
 export function getSampleImageUrl(filename) {
   return `${API_BASE}/sample-images/${filename}`;
 }
+
+/**
+ * GET /hybrid-metadata - Phase 3 dropdown options
+ * Returns { states, districts_by_state, crops_by_season, all_crops, seasons, avg_yield_by_crop }
+ */
+export async function fetchHybridMetadata() {
+  return request('/hybrid-metadata');
+}
+
+/**
+ * POST /hybrid-yield - Phase 3 multi-crop yield prediction
+ * Body: { state, district, crop, season, acres, imageBase64? }
+ * Returns yieldPerHectare, totalProduction, soil, weather, insights, etc.
+ */
+export async function predictHybridYield(input) {
+  return request('/hybrid-yield', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
