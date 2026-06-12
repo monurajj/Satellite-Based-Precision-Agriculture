@@ -455,6 +455,20 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Crop Prediction API is running' });
 });
 
+// Serve static frontend files in production
+const FRONTEND_BUILD_PATH = path.join(PROJECT_ROOT, 'crop-prediction-webapp', 'frontend', 'dist');
+if (fs.existsSync(FRONTEND_BUILD_PATH)) {
+  console.log(`Serving static frontend from: ${FRONTEND_BUILD_PATH}`);
+  app.use(express.static(FRONTEND_BUILD_PATH));
+  // For any path not handled by API routes, serve index.html (SPA routing)
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/weather')) {
+      return next();
+    }
+    res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`Crop Prediction API running on http://localhost:${PORT}`);
 });
