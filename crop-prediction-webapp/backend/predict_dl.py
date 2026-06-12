@@ -19,6 +19,11 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 
+# OPTIMIZATION: Limit memory and threads for cloud deployment (512MB RAM limit)
+torch.set_num_threads(1)
+if hasattr(torch, 'set_num_interop_threads'):
+    torch.set_num_interop_threads(1)
+
 # Optional: Grad-CAM
 try:
     from pytorch_grad_cam import GradCAM
@@ -193,7 +198,7 @@ def preprocess_image(image_path=None, image_bytes=None):
 
 def run_single_model(model, input_tensor, class_names, class_mapping):
     """Run one model and map its output to unified classes."""
-    with torch.no_grad():
+    with torch.inference_mode():
         outputs = model(input_tensor)
         probs = F.softmax(outputs, dim=1)[0]
 
