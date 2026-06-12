@@ -100,7 +100,8 @@ def farmer_inputs_to_features(input_dict):
 
     # PCA transform (use DataFrame to avoid sklearn feature-names warning)
     import warnings
-    with warnings.catch_warnings(action="ignore"):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         band_df = pd.DataFrame(bands.reshape(1, -1), columns=["B2", "B3", "B4", "B8", "B11", "B12"])
         pca_transformed = pca.transform(band_df)[0]
 
