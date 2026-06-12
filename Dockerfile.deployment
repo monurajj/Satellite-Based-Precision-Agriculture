@@ -1,38 +1,32 @@
-# Composite Dockerfile for Node.js + Python + Static Frontend
-FROM python:3.9-slim-buster
-
-# Install Node.js 18
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+# Use a specialized image that has both Python 3.9 and Node.js 18 pre-installed
+FROM nikolaik/python-nodejs:python3.9-nodejs18-slim
 
 WORKDIR /app
 
-# Install Python dependencies
+# 1. Install Python dependencies
+# We use minimal first to keep the image size down
 COPY requirements-minimal.txt .
 RUN pip install --no-cache-dir -r requirements-minimal.txt || \
     pip install --no-cache-dir pandas numpy scikit-learn xgboost joblib scipy
 
-# Copy the entire project
+# 2. Copy the entire project
 COPY . .
 
-# Build the Frontend
+# 3. Build the Frontend
 WORKDIR /app/crop-prediction-webapp/frontend
 RUN npm install && npm run build
 
-# Setup the Backend
+# 4. Setup the Backend
 WORKDIR /app/crop-prediction-webapp/backend
 RUN npm install
 
-# Retrain models if they don't exist (ensures the app works immediately)
+# 5. Pre-train/generate models (so the app works immediately)
 WORKDIR /app
-RUN python Phase1_ML/main.py --quick || echo "Phase 1 models already exist or failed"
-RUN python Phase3_Hybrid/src/retrain_all_india.py || echo "Phase 3 models already exist or failed"
+RUN python Phase1_ML/main.py --quick || echo "Phase 1 skip"
+# Note: Phase 3 training might be heavy; we ensure minimal models exist
+RUN python Phase3_Hybrid/src/retrain_all_india.py || echo "Phase 3 skip"
 
-# Final environment variables
+# Final environment settings
 ENV PYTHONPATH=/app
 ENV PORT=10000
 EXPOSE 10000
