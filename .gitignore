@@ -44,13 +44,27 @@ ENV/
 **/data/*.nc
 !**/data/README.md
 
-# Experiments
+# Experiment results
 **/experiments/results/*.csv
 **/experiments/results/*.png
 **/experiments/hyperparameters/*.json
+
+# ALLOW specific models needed for deployment
+!Phase1_ML/experiments/results/best_model.joblib
+!Phase2_DL/experiments/results/models/EuroSAT_ResNet50_SE.pth
+!Phase2_DL/experiments/results/models/ResNet50_SE.pth
+!Phase3_Hybrid/models/*.pkl
+!Phase3_Hybrid/models/*.joblib
+!Phase3_Hybrid/models/*.json
+
+# Keep ignoring other large/temporary model artifacts
+*.pth
 *.joblib
 *.pkl
 *.pickle
+**/experiments/results/models/
+**/experiments/results/figures/
+**/experiments/results/metrics/
 
 # Reports
 **/reports/*.aux
@@ -87,14 +101,6 @@ Phase2_DL/data/eurosat/
 Phase2_DL/data/EuroSAT/
 Phase2_DL/data/*.zip
 Phase2_DL/data/split_indices.json
-
-# Model weights (.pth files are 100MB+ each)
-*.pth
-
-# Experiment results (figures & metrics are regenerated from notebooks)
-**/experiments/results/figures/
-**/experiments/results/models/
-**/experiments/results/metrics/
 
 # Claude internal
 .claude/plans/
