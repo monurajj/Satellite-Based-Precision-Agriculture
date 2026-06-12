@@ -151,6 +151,16 @@ function callHybridPredict(input) {
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Rewrite /api/* to /* for compatibility with production frontend
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api/')) {
+    const originalUrl = req.url;
+    req.url = req.url.replace('/api/', '/');
+    console.log(`[API Rewrite] ${originalUrl} -> ${req.url}`);
+  }
+  next();
+});
+
 /**
  * Weather routes - support both /weather/* and /api/weather/* (for proxy flexibility)
  */
@@ -459,10 +469,15 @@ app.get('/health', (req, res) => {
 const FRONTEND_BUILD_PATH = path.join(PROJECT_ROOT, 'crop-prediction-webapp', 'frontend', 'dist');
 if (fs.existsSync(FRONTEND_BUILD_PATH)) {
   console.log(`Serving static frontend from: ${FRONTEND_BUILD_PATH}`);
+  
+  // Serve static files (css, js, images)
   app.use(express.static(FRONTEND_BUILD_PATH));
-  // For any path not handled by API routes, serve index.html (SPA routing)
+  
+  // For any other path, serve index.html (EXCLUDING API and IMAGE routes)
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/weather')) {
+    // List of prefixes that should NOT be handled by the frontend
+    const apiPrefixes = ['/predict', '/history', '/weather', '/classify', '/sample-images', '/hybrid', '/health'];
+    if (apiPrefixes.some(p => req.path.startsWith(p))) {
       return next();
     }
     res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
